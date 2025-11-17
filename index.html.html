@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global MES - Hệ thống Quản lý Sản xuất Toàn cầu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { scrollbar-width: thin; scrollbar-color: #cbd5e0 #f7fafc; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f7fafc; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
+        
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .sidebar-active { @apply border-l-4 border-blue-500 bg-blue-50; }
+        .accordion-btn { transition: all 0.3s ease; }
+        .accordion-btn.active { @apply bg-blue-100 text-blue-700; }
+        
+        .search-highlight { @apply bg-yellow-200 font-bold; }
+        
+        .step-badge { @apply inline-block px-3 py-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full text-sm font-bold; }
+        .card-hover { @apply hover:shadow-lg transition-shadow duration-300; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <!-- Top Navigation -->
+    <div class="fixed top-0 w-full bg-white border-b border-gray-200 shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10.5 1.5H3.75A2.25 2.25 0 001.5 3.75v12.5A2.25 2.25 0 003.75 18.5h12.5a2.25 2.25 0 002.25-2.25V9.5M10.5 1.5v8m0 0H2m8.5 0h8.5M10.5 9.5v8"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-gray-900">Global MES</h1>
+                    <p class="text-xs text-gray-500">Hệ thống Quản lý Sản xuất Toàn cầu</p>
+                </div>
+            </div>
+            <div class="hidden md:flex items-center space-x-4">
+                <span class="text-sm text-gray-600">📅 17/11/2025</span>
+                <span class="text-sm text-gray-600">⏱️ 62 phút</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="pt-24 pb-8">
+        <div class="max-w-7xl mx-auto">
+            <!-- Main Grid Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 px-4">
+                
+                <!-- SIDEBAR NAVIGATION -->
+                <div class="lg:col-span-1">
+                    <div class="sticky top-28 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-3">
+                            <h2 class="text-white font-bold text-sm">📑 MỤC LỤC</h2>
+                        </div>
+                        <div class="p-0 max-h-96 overflow-y-auto">
+                            <nav class="space-y-0">
+                                <button class="sidebar-nav-btn w-full text-left px-4 py-3 hover:bg-gray-100 border-l-4 border-transparent transition-all text-sm font-medium active" data-section="overview">
+                                    📊 Tổng Quan
+                                </button>
+                                <button class="sidebar-nav-btn w-full text-left px-4 py-3 hover:bg-gray-100 border-l-4 border-transparent transition-all text-sm font-medium" data-section="process-overview">
+                                    🔄 Quy Trình E2E
+                                </button>
+                                <button class="sidebar-nav-btn w-full text-left px-4 py-3 hover:bg-gray-100 border-l-4 border-transparent transition-all text-sm font-medium" data-section="stage1">
+                                    📋 Giai Đoạn 1: Tạo Lệnh
+                                </button>
+                                <button class="sidebar-nav-btn w-full text-left px-4 py-3 hover:bg-gray-100 border-l-4 border-transparent transition-all text-sm font-medium" data-section="stage2">
+                                    🔧 Giai Đoạn 2: Chuẩn bị
+                                </button>
+                                <button class="sidebar-nav-btn w-full text-left px-4 py-3 hover:bg-gray-100 border-l-4 border-transparent transition-all text-sm font-medium" data-section="stage3">
+                                    📅 Giai Đoạn 3: Lập KH
+                                </button>
+                                <button class="sidebar-nav-btn w-full text-left px-4 py-3 hover:bg-gray-100 border-l-4 border-transparent transition-all text-sm font-medium" data-section="stage4">
+                                    ⚙️ Giai Đoạn 4: Thực hiện
+                                </button>
+                                <button class="sidebar-nav-btn w-full text-left px-4 py-3 hover:bg-gray-100 border-l-4 border-transparent transition-all text-sm font-medium" data-section="architecture">
+                                    🏗️ Cấu Trúc Dữ Liệu
+                                </button>
+                                <button class="sidebar-nav-btn w-full text-left px-4 py-3 hover:bg-gray-100 border-l-4 border-transparent transition-all text-sm font-medium" data-section="integration">
+                                    🔗 Tích Hợp Hệ Thống
+                                </button>
+                                <button class="sidebar-nav-btn w-full text-left px-4 py-3 hover:bg-gray-100 border-l-4 border-transparent transition-all text-sm font-medium" data-section="decisions">
+                                    ✅ Quyết Định & Hành Động
+                                </button>
+                                <button class="sidebar-nav-btn w-full text-left px-4 py-3 hover:bg-gray-100 border-l-4 border-transparent transition-all text-sm font-medium" data-section="correction">
+                                    ✏️ Bảng Hiệu Đính
+                                </button>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <!-- Search Box -->
+                    <div class="mt-4 sticky top-96">
+                        <input type="text" id="searchInput" placeholder="🔍 Tìm kiếm..." class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                        <p class="text-xs text-gray-500 mt-2 text-center" id="searchCount"></p>
+                    </div>
+                </div>
+
+                <!-- MAIN CONTENT AREA -->
+                <div class="lg:col-span-3">
+                    
+                    <!-- OVERVIEW Section -->
+                    <section id="overview" class="content-section fade-in bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+                        <div class="mb-6">
+                            <h2 class="text-3xl font-bold text-gray-900 mb-2">📊 Tổng Quan Global MES</h2>
+                            <p class="text-sm text-gray-600 border-l-4 border-blue-500 pl-4 italic">Hệ thống quản lý sản xuất toàn cầu từ đơn hàng đến vận chuyển</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                            <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
+                                <div class="text-3xl mb-2">⏱️</div>
+                                <p class="text-sm font-bold text-gray-700">Thời gian họp</p>
+                                <p class="text-2xl font-bold text-blue-600">62 phút</p>
+                            </div>
+                            <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
+                                <div class="text-3xl mb-2">🎯</div>
+                                <p class="text-sm font-bold text-gray-700">Mục tiêu chính</p>
+                                <p class="text-sm font-bold text-purple-600">Paperless + Tự động</p>
+                            </div>
+                            <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
+                                <div class="text-3xl mb-2">📊</div>
+                                <p class="text-sm font-bold text-gray-700">4 Giai đoạn</p>
+                                <p class="text-sm font-bold text-green-600">Quy trình hoàn chỉnh</p>
+                            </div>
+                        </div>
+
+                        <!-- Accordion: Mục tiêu chính -->
+                        <div class="mb-6">
+                            <button class="accordion-btn w-full text-left px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-bold flex items-center justify-between" onclick="toggleAccordion(this)">
+                                <span>🎯 Ba Mục Tiêu Chính</span>
+                                <span class="accordion-arrow">▼</span>
+                            </button>
+                            <div class="accordion-content hidden bg-gray-50 p-4 rounded-b-lg border border-t-0 border-gray-200">
+                                <div class="space-y-3">
+                                    <div class="flex gap-3">
+                                        <span class="text-2xl">1️⃣</span>
+                                        <div>
+                                            <p class="font-bold text-gray-900">Tự động hóa</p>
+                                            <p class="text-sm text-gray-600">Giảm tối đa các công việc thủ công, từ xử lý đơn hàng đến lên kế hoạch</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <span class="text-2xl">2️⃣</span>
+                                        <div>
+                                            <p class="font-bold text-gray-900">Tiêu chuẩn hóa</p>
+                                            <p class="text-sm text-gray-600">Các dây chuyền sản xuất hoạt động theo quy trình chuẩn nhất</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <span class="text-2xl">3️⃣</span>
+                                        <div>
+                                            <p class="font-bold text-gray-900">Không giấy tờ (Paperless)</p>
+                                            <p class="text-sm text-gray-600">Không có tài liệu in trên sàn sản xuất, tất cả thông tin trên màn hình số hóa</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Accordion: Thông tin tổ chức -->
+                        <div>
+                            <button class="accordion-btn w-full text-left px-4 py-3 bg-gray-200 text-gray-900 rounded-lg font-bold flex items-center justify-between" onclick="toggleAccordion(this)">
+                                <span>ℹ️ Thông Tin Tổ Chức</span>
+                                <span class="accordion-arrow">▼</span>
+                            </button>
+                            <div class="accordion-content hidden bg-gray-50 p-4 rounded-b-lg border border-t-0 border-gray-200">
+                                <div class="space-y-2 text-sm">
+                                    <p><span class="font-bold">Thời gian:</span> Cuộc họp dài khoảng 62 phút</p>
+                                    <p><span class="font-bold">Nội dung:</span> Giải thích chi tiết về quy trình hoạt động hệ thống Global MES và các bước xử lý đơn hàng</p>
+                                    <p><span class="font-bold">Thành phần:</span> Các chuyên gia về hệ thống MES, nhân viên quản lý sản xuất, đội kỹ thuật, quản lý kinh doanh</p>
+                                    <p><span class="font-bold">Độc giả mục tiêu:</span> Nhân viên kỹ thuật, quản lý sản xuất, đội kinh doanh</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- PROCESS OVERVIEW Section -->
+                    <section id="process-overview" class="content-section fade-in bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">🔄 Quy Trình End-to-End (9 Bước)</h2>
+                        
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500 card-hover">
+                                <div class="flex gap-4">
+                                    <div class="step-badge">1</div>
+                                    <div>
+                                        <p class="font-bold text-gray-900">Nhận đơn hàng từ hệ thống gốc</p>
+                                        <p class="text-sm text-gray-600 mt-1">Đơn hàng được capture từ hệ thống YC (hệ thống quản lý đơn hàng). Dữ liệu bao gồm: Sales Order (đơn hàng bán) và Variable Data (dữ liệu biến). Dữ liệu được chuyển đến hệ thống MES</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500 card-hover">
+                                <div class="flex gap-4">
+                                    <div class="step-badge">2</div>
+                                    <div>
+                                        <p class="font-bold text-gray-900">Xử lý trong MES - Batching</p>
+                                        <p class="text-sm text-gray-600 mt-1">Hệ thống MES nhận dữ liệu từ YC. Thực hiện <span class="font-bold">batching</span>: kết hợp nhiều dòng lệnh thành một lệnh sản xuất chứng. Giúp cải thiện hiệu suất sản xuất</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-pink-50 p-4 rounded-lg border-l-4 border-pink-500 card-hover">
+                                <div class="flex gap-4">
+                                    <div class="step-badge">3</div>
+                                    <div>
+                                        <p class="font-bold text-gray-900">Gửi dữ liệu đến GPM</p>
+                                        <p class="text-sm text-gray-600 mt-1">Dữ liệu được gửi đến hệ thống GPM (Global Print Management). GPM thực hiện <span class="font-bold">Stating</span> (chuẩn bị in ấn). Tạo ra <span class="font-bold">Q Information</span> (thông tin in sắc)</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-indigo-50 p-4 rounded-lg border-l-4 border-indigo-500 card-hover">
+                                <div class="flex gap-4">
+                                    <div class="step-badge">4</div>
+                                    <div>
+                                        <p class="font-bold text-gray-900">Chuẩn bị sản xuất</p>
+                                        <p class="text-sm text-gray-600 mt-1">Thông tin Q được chuyển đến Global MAS (Hệ thống Quản lý Sản xuất Toàn cầu). Global MAS tạo <span class="font-bold">Digital Job Ticket</span> (lệnh sản xuất số hóa)</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-cyan-50 p-4 rounded-lg border-l-4 border-cyan-500 card-hover">
+                                <div class="flex gap-4">
+                                    <div class="step-badge">5</div>
+                                    <div>
+                                        <p class="font-bold text-gray-900">Tạo Hướng dẫn Sản xuất</p>
+                                        <p class="text-sm text-gray-600 mt-1">Kết hợp ba thành phần: Thông tin đơn hàng, Thông tin từng bước, Thông tin liệu. Tạo <span class="font-bold">Working Instruction</span> (hướng dẫn sản xuất chi tiết)</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-teal-50 p-4 rounded-lg border-l-4 border-teal-500 card-hover">
+                                <div class="flex gap-4">
+                                    <div class="step-badge">6</div>
+                                    <div>
+                                        <p class="font-bold text-gray-900">Lập kế hoạch và Thực hiện</p>
+                                        <p class="text-sm text-gray-600 mt-1">Hệ thống APS lập kế hoạch sản xuất. Công nhân nhận thông tin qua màn hình tại mỗi trạm. Quét mã vạch, kiểm tra thông tin, thực hiện sản xuất</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-lime-50 p-4 rounded-lg border-l-4 border-lime-500 card-hover">
+                                <div class="flex gap-4">
+                                    <div class="step-badge">7</div>
+                                    <div>
+                                        <p class="font-bold text-gray-900">Theo dõi sản xuất</p>
+                                        <p class="text-sm text-gray-600 mt-1">Hệ thống theo dõi trạng thái đơn hàng real-time. Kiểm tra tỷ lệ hoàn thành từng bước. Xác định vị trí WIP (Hàng trong quá trình sản xuất)</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-500 card-hover">
+                                <div class="flex gap-4">
+                                    <div class="step-badge">8</div>
+                                    <div>
+                                        <p class="font-bold text-gray-900">Kiểm tra Liệu</p>
+                                        <p class="text-sm text-gray-600 mt-1">Hệ thống MES kết nối với WMS (Warehouse Management System). Cho phép kiểm tra tự động liệu có sẵn hoặc không</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-500 card-hover">
+                                <div class="flex gap-4">
+                                    <div class="step-badge">9</div>
+                                    <div>
+                                        <p class="font-bold text-gray-900">Hoàn thành và Ghi nhận</p>
+                                        <p class="text-sm text-gray-600 mt-1">Hàng hoàn thành được ghi nhận vào kho. Dữ liệu giao dịch được chuyển lại hệ thống ERP. ERP cập nhật: chi phí, ghi nhận giao dịch, quản lý vận chuyển</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- STAGE 1 Section -->
+                    <section id="stage1" class="content-section fade-in bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">📋 Giai Đoạn 1: Tạo Lệnh Sản Xuất (Work Order Generation)</h2>
+                        
+                        <div class="mb-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
+                            <p class="text-sm text-gray-700"><span class="font-bold">Mô tả:</span> Giai đoạn xử lý và chuẩn bị dữ liệu cho việc sản xuất</p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-300">
+                                <button class="accordion-btn w-full text-left flex items-center justify-between font-bold text-gray-900" onclick="toggleAccordion(this)">
+                                    <span>Bước 1.1: Nhập đơn hàng tự động (Fully Automated)</span>
+                                    <span class="accordion-arrow">▼</span>
+                                </button>
+                                <div class="accordion-content hidden mt-3 text-sm text-gray-600 space-y-2">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>Hệ thống Global MES tự động nhập đơn hàng từ hệ thống gốc mỗi 30 phút</li>
+                                        <li>Không cần nhân viên thực hiện hành động gì (fully automated = không cần click nút)</li>
+                                        <li><span class="font-bold">Tần suất:</span> Mỗi 30 phút, hệ thống kiểm tra các đơn hàng mới</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-300">
+                                <button class="accordion-btn w-full text-left flex items-center justify-between font-bold text-gray-900" onclick="toggleAccordion(this)">
+                                    <span>Bước 1.2: Kiểm tra hợp lệ dữ liệu đơn hàng</span>
+                                    <span class="accordion-arrow">▼</span>
+                                </button>
+                                <div class="accordion-content hidden mt-3 text-sm text-gray-600 space-y-2">
+                                    <p class="font-bold">Kiểm tra:</p>
+                                    <ul class="list-disc list-inside space-y-1 ml-2">
+                                        <li>Sản phẩm (Item) có tồn tại không?</li>
+                                        <li>Trạng thái sản phẩm có sẵn sàng không?</li>
+                                        <li>Thông tin GPM có đã được chuẩn bị chưa?</li>
+                                    </ul>
+                                    <p class="mt-2">Nếu có vấn đề → Tạo <span class="font-bold">Task</span> để nhân viên xử lý. Ví dụ: Nếu sản phẩm chưa được xác định hoặc trạng thái không phù hợp, hệ thống sẽ tạo task để yêu cầu kiểm tra và hoàn thành.</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-300">
+                                <button class="accordion-btn w-full text-left flex items-center justify-between font-bold text-gray-900" onclick="toggleAccordion(this)">
+                                    <span>Bước 1.3-1.5: Xử lý Stepping & Chọn Máy In</span>
+                                    <span class="accordion-arrow">▼</span>
+                                </button>
+                                <div class="accordion-content hidden mt-3 text-sm text-gray-600 space-y-2">
+                                    <p><span class="font-bold">1.3 - Nhập kết quả từ GPM:</span> Hệ thống lấy kết quả từ GPM về thông tin in sắc (Stepping Results)</p>
+                                    <p><span class="font-bold">1.4 - Xử lý đơn hàng không có GPM:</span> Sử dụng Setting Tool (công cụ chuẩn bị) tích hợp trong Global MES</p>
+                                    <p><span class="font-bold">1.5 - Chọn loại máy in:</span></p>
+                                    <ul class="list-disc list-inside space-y-1 ml-2">
+                                        <li><span class="font-bold">Máy Offset:</span> In ấn truyền thống, phù hợp số lượng lớn, chi phí thấp hơn</li>
+                                        <li><span class="font-bold">Máy kỹ thuật số:</span> Linh hoạt hơn, phù hợp số lượng nhỏ</li>
+                                    </ul>
+                                    <p class="mt-2"><span class="font-bold">Logic tự động:</span> Nếu số lượng < 30.000 VÀ tải máy kỹ thuật số < 5 ngày → chuyển sang máy kỹ thuật số</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-300">
+                                <button class="accordion-btn w-full text-left flex items-center justify-between font-bold text-gray-900" onclick="toggleAccordion(this)">
+                                    <span>Bước 1.6-1.8: Xác định & Tạo Lệnh Sản Xuất</span>
+                                    <span class="accordion-arrow">▼</span>
+                                </button>
+                                <div class="accordion-content hidden mt-3 text-sm text-gray-600 space-y-2">
+                                    <p><span class="font-bold">1.6 - Working Instruction:</span> Khái niệm quan trọng: Một sản phẩm có thể có nhiều hướng dẫn sản xuất khác nhau (Offset vs Digital, v.v.)</p>
+                                    <p><span class="font-bold">1.7 - Tạo Lệnh Sản Xuất:</span> Tạo lệnh sản xuất chính (Main Work Order) và các lệnh phụ (Sub Orders) nếu cần</p>
+                                    <p><span class="font-bold">1.8 - Xử lý Combo:</span> Tự động phát hiện các dòng lệnh nên kết hợp để vận chuyển cùng nhau</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-300">
+                                <button class="accordion-btn w-full text-left flex items-center justify-between font-bold text-gray-900" onclick="toggleAccordion(this)">
+                                    <span>Bước 1.9-1.12: Kiểm tra & Gán Thông Tin</span>
+                                    <span class="accordion-arrow">▼</span>
+                                </button>
+                                <div class="accordion-content hidden mt-3 text-sm text-gray-600 space-y-2">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li><span class="font-bold">1.9:</span> Kiểm tra Màu mẫu, Dụng cụ (Die board)</li>
+                                        <li><span class="font-bold">1.10:</span> Tính toán Phế liệu (Scrap Calculation)</li>
+                                        <li><span class="font-bold">1.11:</span> Gán độ ưu tiên và ngày mục tiêu</li>
+                                        <li><span class="font-bold">1.12:</span> Kiểm tra Liệu (Material Checking) - Hiện tại: Click nút; Tương lai: Tự động</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- STAGE 2 Section -->
+                    <section id="stage2" class="content-section fade-in bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">🔧 Giai Đoạn 2: Chuẩn Bị Sản Xuất (Manufacturing Preparation)</h2>
+                        
+                        <div class="mb-4 p-4 bg-green-50 border-l-4 border-green-500 rounded">
+                            <p class="text-sm text-gray-700"><span class="font-bold">Mô tả:</span> Giai đoạn chuẩn bị mọi thứ trước khi sản xuất bắt đầu</p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-300">
+                                <button class="accordion-btn w-full text-left flex items-center justify-between font-bold text-gray-900" onclick="toggleAccordion(this)">
+                                    <span>Bước 2.1: 10 Điểm Kiểm Soát</span>
+                                    <span class="accordion-arrow">▼</span>
+                                </button>
+                                <div class="accordion-content hidden mt-3 text-sm text-gray-600 space-y-2">
+                                    <p class="font-bold">Hệ thống có 10 điểm kiểm soát cho dây chuyền giấy:</p>
+                                    <ol class="list-decimal list-inside space-y-1 ml-2">
+                                        <li>Kiểm tra Cấu phần List (BOM Check) - Danh sách liệu đã đầy đủ chưa?</li>
+                                        <li>Kiểm tra Mẫu màu (Color Sample Check) - Mẫu màu có sẵn chưa?</li>
+                                        <li>Kiểm tra Dụng cụ in (Tooling Check) - Dụng cụ in sắc có sẵn chưa?</li>
+                                        <li>Kiểm tra Thông tin Stepping - Thông tin từng bước in sắc có đúng chưa?</li>
+                                        <li>Kiểm tra Prepress - Công việc chuẩn bị in có hoàn thành chưa?</li>
+                                        <li>Các điểm kiểm soát khác tùy theo dòng sản phẩm</li>
+                                    </ol>
+                                    <p class="mt-2"><span class="font-bold">Lưu ý:</span> Không cố định. Mỗi dòng sản phẩm có các điểm kiểm soát khác nhau và có thể cấu hình</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-300">
+                                <button class="accordion-btn w-full text-left flex items-center justify-between font-bold text-gray-900" onclick="toggleAccordion(this)">
+                                    <span>Bước 2.2-2.3: Tự Động Hóa & Quản Lý Công Việc</span>
+                                    <span class="accordion-arrow">▼</span>
+                                </button>
+                                <div class="accordion-content hidden mt-3 text-sm text-gray-600 space-y-2">
+                                    <p><span class="font-bold">Trước đây:</span> Mọi kiểm tra làm thủ công, sử dụng bản sao cứng (giấy in) - rất tốn thời gian</p>
+                                    <p><span class="font-bold">Bây giờ:</span></p>
+                                    <ul class="list-disc list-inside space-y-1 ml-2">
+                                        <li>Hệ thống tự động kiểm tra tất cả 10 điểm</li>
+                                        <li>Tự động tạo các công việc (tasks)</li>
+                                        <li>Gán công việc cho các nhóm tương ứng</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-300">
+                                <button class="accordion-btn w-full text-left flex items-center justify-between font-bold text-gray-900" onclick="toggleAccordion(this)">
+                                    <span>Bước 2.4: Thay Đổi Loại Máy In</span>
+                                    <span class="accordion-arrow">▼</span>
+                                </button>
+                                <div class="accordion-content hidden mt-3 text-sm text-gray-600 space-y-2">
+                                    <p><span class="font-bold">Tình huống:</span> Nhân viên quản lý thay đổi loại máy in từ offset sang kỹ thuật số</p>
+                                    <p><span class="font-bold">Điều gì xảy ra:</span></p>
+                                    <ul class="list-disc list-inside space-y-1 ml-2">
+                                        <li>Hệ thống gửi yêu cầu mới đến GPM</li>
+                                        <li>GPM phải tạo lại kết quả in sắc</li>
+                                        <li>Kết quả mới được gửi lại MES</li>
+                                    </ul>
+                                    <p class="mt-2"><span class="font-bold">Trạng thái hiện tại:</span> Tất cả làm thủ công | <span class="font-bold">Tương lai:</span> Tự động hóa</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-300">
+                                <button class="accordion-btn w-full text-left flex items-center justify-between font-bold text-gray-900" onclick="toggleAccordion(this)">
+                                    <span>Bước 2.5-2.6: Tính Phế Liệu & Kiểm Tra Liệu Lần 2</span>
+                                    <span class="accordion-arrow">▼</span>
+                                </button>
+                                <div class="accordion-content hidden mt-3 text-sm text-gray-600 space-y-2">
+                                    <p><span class="font-bold">Phế liệu bao gồm 2 phần:</span></p>
+                                    <p class="font-bold text-gray-900 mt-2">1. Layout Scrap (Phế liệu bố cục):</p>
+                                    <ul class="list-disc list-inside space-y-1 ml-2 text-gray-600">
+                                        <li>Phụ thuộc vào loại máy in và kích thước giấy</li>
+                                        <li>Ví dụ: Máy A với giấy lớn: in 20 sản phẩm/tờ; Máy B với giấy nhỏ: chỉ in 10 sản phẩm/tờ</li>
+                                    </ul>
+                                    <p class="font-bold text-gray-900 mt-2">2. Operation Scrap (Phế liệu từng bước):</p>
+                                    <ul class="list-disc list-inside space-y-1 ml-2 text-gray-600">
+                                        <li>Phế liệu từ mỗi bước: chuẩn bị, in sắc, cắt xén</li>
+                                        <li>Có bảng đặc biệt (Matrix) để tính dựa trên: số lượng, SKU, số bước in</li>
+                                    </ul>
+                                    <p class="mt-2"><span class="font-bold">Kiểm tra lần 2:</span> Kiểm tra lại trước phát hành lệnh sản xuất, xem có đủ liệu hay không</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-300">
+                                <button class="accordion-btn w-full text-left flex items-center justify-between font-bold text-gray-900" onclick="toggleAccordion(this)">
+                                    <span>Bước 2.7-2.10: Chuẩn Bị Liệu & Yêu Cầu</span>
+                                    <span class="accordion-arrow">▼</span>
+                                </button>
+                                <div class="accordion-content hidden mt-3 text-sm text-gray-600 space-y-2">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li><span class="font-bold">2.7:</span> Chuẩn bị Liệu in Sắc (CTP - Computer to Plate) - tạo tấm in từ tệp số hóa</li>
+                                        <li><span class="font-bold">2.8:</span> Chuẩn bị Liệu khác: In mẫu màu, chuẩn bị màu mực, dụng cụ khác</li>
+                                        <li><span class="font-bold">2.9:</span> Hệ thống tự động tạo yêu cầu liệu và gửi trực tiếp đến kho hàng</li>
+                                        <li><span class="font-bold">2.10:</span> Kho hàng xem yêu cầu từ MES, chuẩn bị và giao liệu đến sàn sản xuất</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- STAGE 3 Section -->
+                    <section id="stage3" class="content-section fade-in bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">📅 Giai Đoạn 3: Lập Kế Hoạch (Scheduling)</h2>
+                        
+                        <div class="space-y-4">
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-300">
+                                <button class="accordion-btn w-full text-left flex items-center justify-between font-bold text-gray-900" onclick="toggleAccordion(this)">
+                                    <span>Bước 3.1: Chạy APS (Advanced Planning System)</span>
+                                    <span class="accordion-arrow">▼</span>
+                                </button>
+                                <div class="accordion-content hidden mt-3 text-sm text-gray-600 space-y-2">
+                                    <p><span class="font-bold">APS là hệ thống lập kế hoạch nâng cao</span></p>
+                                    <p><span class="font-bold">Đầu vào:</span> Tất cả thông tin lệnh sản xuất</p>
+                                    <p><span class="font-bold">Xử lý:</span> Tối ưu hóa lịch trình:</p>
+                                    <ul class="list-disc list-inside space-y-1 ml-2">
+                                        <li>Xem xét tài nguyên (máy, nhân lực)</li>
+                                        <li>Xem xét thời gian chuyển đổi</li>
+                                        <li>Xem xét độ ưu tiên</li>
+                                        <li>Xem xét khả năng sử dụng liệu</li>
+                                    </ul>
+                                    <p class="mt-2"><span class="font-bold">Đầu ra:</span> Lịch sản xuất cho toàn bộ dây chuyền</p>
+                                    <p class="mt-2"><span class="font-bold">Lưu ý:</span> Có thể thiết lập chạy tự động mỗi 2 giờ hoặc thủ công khi cần</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-300">
+                                <button class="accordion-btn w-full text-left flex items-center justify-between font-bold text-gray-900" onclick="toggleAccordion(this)">
+                                    <span>Bước 3.2-3.4: Xem Xét & Công Bộ Lệnh</span>
+                                    <span class="accordion-arrow">▼</span>
+                                </button>
+                                <div class="accordion-content hidden mt-3 text-sm text-gray-600 space-y-2">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li><span class="font-bold">3.2:</span> Xem lịch sản xuất đã tạo, kiểm tra logic, điều chỉnh thủ công nếu cần</li>
+                                        <li><span class="font-bold">3.3:</span> Công bộ lệnh sản xuất cho sàn sản xuất khi lịch được phê duyệt</li>
+                                        <li><span class="font-bold">3.4:</span> Kiểm tra liệu lần 3 - TRƯỚC phát hành lệnh, đảm bảo mọi thứ sẵn sàng</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- STAGE 4 Section -->
+                    <section id="stage4" class="content-section fade-in bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">⚙️ Giai Đoạn 4: Thực Hiện Sản Xuất (Work Order Execution)</h2>
+                        
+                        <div class="space-y-4">
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-300">
+                                <button class="accordion-btn w-full text-left flex items-center justify-between font-bold text-gray-900" onclick="toggleAccordion(this)">
+                                    <span>Bước 4.1-4.2: Nhận Lệnh & Kiểm Tra Thông Tin</span>
+                                    <span class="accordion-arrow">▼</span>
+                                </button>
+                                <div class="accordion-content hidden mt-3 text-sm text-gray-600 space-y-2">
+                                    <p><span class="font-bold">Trên sàn sản xuất tương lai (Paperless Model):</span></p>
+                                    <p>Mỗi trạm làm việc có một <span class="font-bold">màn hình liên kết với Global MAS</span>. Công nhân:</p>
+                                    <ol class="list-decimal list-inside space-y-1 ml-2">
+                                        <li>Nhận một hộp hàng (box of products)</li>
+                                        <li>Quét mã vạch trên hộp</li>
+                                        <li>Màn hình hiển thị: Mã vạch, Cân nặng, Mô tả sản phẩm, Hướng dẫn in sắc, cắt xén, kiểm tra, đóng gói, Lệnh sản xuất số hóa</li>
+                                    </ol>
+                                    <p class="mt-2"><span class="font-bold">Kiểm tra:</span> Công nhân xem toàn bộ thông tin trên màn hình, kiểm tra có phải sản phẩm cần sản xuất, có tất cả liệu cần thiết không</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-300">
+                                <button class="accordion-btn w-full text-left flex items-center justify-between font-bold text-gray-900" onclick="toggleAccordion(this)">
+                                    <span>Bước 4.3-4.5: Thực Hiện & Theo Dõi</span>
+                                    <span class="accordion-arrow">▼</span>
+                                </button>
+                                <div class="accordion-content hidden mt-3 text-sm text-gray-600 space-y-2">
+                                    <p><span class="font-bold">4.3 - Thực hiện các bước:</span> In sắc → Cắt xén → Kiểm tra → Sắp xếp → Đóng gói</p>
+                                    <p><span class="font-bold">4.4 - Báo cáo hoạt động:</span> Sau mỗi bước, công nhân click nút trên màn hình (không cần giấy) để báo cáo: Bước hoàn thành chưa? Có bao nhiêu sản phẩm? Có vấn đề gì không?</p>
+                                    <p><span class="font-bold">4.5 - Theo dõi Real-time:</span> Chức năng Order Tracking cho phép:</p>
+                                    <ul class="list-disc list-inside space-y-1 ml-2">
+                                        <li>Xem trạng thái đơn hàng theo thời gian thực</li>
+                                        <li>Xem tỷ lệ hoàn thành (Heat Rate)</li>
+                                        <li>Xem vị trí WIP - hàng đang ở khu vực nào</li>
+                                        <li>Dashboard cho nhân viên quản lý theo dõi tất cả dây chuyền</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-300">
+                                <button class="accordion-btn w-full text-left flex items-center justify-between font-bold text-gray-900" onclick="toggleAccordion(this)">
+                                    <span>Bước 4.6-4.8: Hoàn Thành & Ghi Nhận</span>
+                                    <span class="accordion-arrow">▼</span>
+                                </button>
+                                <div class="accordion-content hidden mt-3 text-sm text-gray-600 space-y-2">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li><span class="font-bold">4.6:</span> Khi tất cả bước hoàn thành, hàng chuyển đến kho hoàn thành</li>
+                                        <li><span class="font-bold">4.7:</span> Hàng được ghi nhận vào kho, hệ thống tạo ghi nhận nhập kho, dữ liệu chuyển đến ERP</li>
+                                        <li><span class="font-bold">4.8:</span> ERP cập nhật: Chi phí (Costing), Ghi nhận giao dịch (Accounting), Quản lý vận chuyển (Shipment Management)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- ARCHITECTURE Section -->
+                    <section id="architecture" class="content-section fade-in bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">🏗️ Cấu Trúc Item & Working Instruction</h2>
+                        
+                        <div class="mb-6 p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded">
+                            <p class="font-bold text-gray-900">Khái niệm "Một Sản Phẩm, Nhiều Hướng Dẫn"</p>
+                            <p class="text-sm text-gray-600 mt-2">Cùng một sản phẩm có thể được sản xuất bằng các máy khác nhau, với quy trình khác nhau</p>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="font-bold text-lg text-gray-900 mb-3">📌 Ví Dụ: Tờ Rơi Quảng Cáo</h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                                    <p class="font-bold text-blue-900 mb-2">🔵 Máy 1 (Offset CT74)</p>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        <li><span class="font-bold">Quá trình:</span> Chuẩn bị → In sắc → Cắt xén → Kiểm tra → Sắp xếp → Đóng gói</li>
+                                        <li><span class="font-bold">Liệu:</span> Giấy A, Mực X, Dụng cụ offset</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500">
+                                    <p class="font-bold text-purple-900 mb-2">🟣 Máy 2 (Digital HP7K)</p>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        <li><span class="font-bold">Quá trình:</span> Chuẩn bị → In số → Cắt xén → Kiểm tra → Sắp xếp → Đóng gói</li>
+                                        <li><span class="font-bold">Liệu:</span> Giấy B, Mực Y, Dụng cụ số</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="font-bold text-lg text-gray-900 mb-3">🔧 Cách Sử Dụng Trong MES</h3>
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-300">
+                                <p class="text-sm text-gray-600 mb-3">Khi tạo lệnh sản xuất:</p>
+                                <ol class="list-decimal list-inside space-y-2 text-sm text-gray-600">
+                                    <li>Hệ thống chọn loại máy (Offset hoặc Digital)</li>
+                                    <li>Hệ thống tự động <span class="font-bold">chọn Working Instruction tương ứng</span></li>
+                                    <li>Hệ thống <span class="font-bold">copy hướng dẫn</span> vào lệnh sản xuất</li>
+                                    <li>Lệnh cuối cùng chỉ chứa <span class="font-bold">1 Working Instruction</span> cho máy được chọn</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="font-bold text-lg text-gray-900 mb-3">📋 Cấu Trúc Thông Tin Trong Working Instruction</h3>
+                            <div class="space-y-3">
+                                <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                                    <p class="font-bold text-blue-900 mb-2">⚫ Ví Dụ Operation 1: IN SẮC</p>
+                                    <div class="text-sm text-gray-600 space-y-1">
+                                        <p>Số lượng màu: 5</p>
+                                        <p><span class="font-bold">Color 1:</span> Đỏ | Mực: Dầu đỏ | Mẫu màu: 123 | Độ đậm >= 80%</p>
+                                        <p><span class="font-bold">Sides to Print:</span> Cả mặt trước lẫn mặt sau</p>
+                                        <p><span class="font-bold">Special Requirements:</span> Độ sáng, độ tỷ lệ chính xác</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500">
+                                    <p class="font-bold text-purple-900 mb-2">✂️ Ví Dụ Operation 3: CẮT XÉN</p>
+                                    <div class="text-sm text-gray-600 space-y-1">
+                                        <p><span class="font-bold">Machine Type:</span> Semi-auto (Bán tự động)</p>
+                                        <p><span class="font-bold">Die Board:</span> Dụng cụ số 456</p>
+                                        <p><span class="font-bold">Specifications:</span> Kích thước 100x200mm</p>
+                                        <p><span class="font-bold">Quality Check:</span> Lề = 2mm</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- INTEGRATION Section -->
+                    <section id="integration" class="content-section fade-in bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">🔗 Tích Hợp Hệ Thống</h2>
+                        
+                        <div class="mb-6">
+                            <h3 class="font-bold text-lg text-gray-900 mb-4">🌐 Kiến Trúc Dữ Liệu</h3>
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-300 overflow-x-auto">
+                                <pre class="text-sm text-gray-600"><code>YC (Order Capture)
+    ↓
+    Sales Order + Variable Data
+         ↓
+    MES (Global MES)
+    ├─→ GPM → Thông tin in sắc
+    ├─→ WMS → Kiểm tra liệu
+    ├─→ APS → Lập kế hoạch
+    └─→ Sàn sản xuất
+         └─→ ERP → Chi phí, Kế toán, Vận chuyển</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                                <p class="font-bold text-blue-900 mb-3">📥 Dữ Liệu Đầu Vào</p>
+                                <ul class="text-sm text-gray-600 space-y-2">
+                                    <li><span class="font-bold">Từ YC → MES:</span> Sales Order, Variable Data</li>
+                                    <li><span class="font-bold">Từ GPM → MES:</span> Stepping Results, Q Information</li>
+                                    <li><span class="font-bold">Từ OM & PP → MES:</span> Item Information, Material Information</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500">
+                                <p class="font-bold text-purple-900 mb-3">📤 Dữ Liệu Đầu Ra</p>
+                                <ul class="text-sm text-gray-600 space-y-2">
+                                    <li><span class="font-bold">Từ MES → Sàn sản xuất:</span> Work Orders, Working Instructions, Digital Job Tickets</li>
+                                    <li><span class="font-bold">Từ Sàn sản xuất → ERP:</span> Finished Goods Receipt, Operation Feedback</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- DECISIONS Section -->
+                    <section id="decisions" class="content-section fade-in bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">✅ Quyết Định & Hành Động</h2>
+                        
+                        <div class="mb-6">
+                            <h3 class="font-bold text-lg text-gray-900 mb-4">📋 Các Quyết Định Đã Đạt Được</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm border-collapse">
+                                    <thead>
+                                        <tr class="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Vấn Đề</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Quyết Định</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="hover:bg-gray-100">
+                                            <td class="border border-gray-300 px-4 py-2">Kiểm tra hàng trong quá trình chuyển (GIT)</td>
+                                            <td class="border border-gray-300 px-4 py-2">Có, tính vào khả năng sử dụng liệu</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-100 bg-gray-50">
+                                            <td class="border border-gray-300 px-4 py-2">Tách công việc #9, #10, #11 hay kết hợp?</td>
+                                            <td class="border border-gray-300 px-4 py-2">Giữ tách biệt - để người quản lý có quyền kiểm soát</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-100">
+                                            <td class="border border-gray-300 px-4 py-2">Chạy APS tự động hay thủ công?</td>
+                                            <td class="border border-gray-300 px-4 py-2">Có thể tự động, nhưng giữ tùy chọn thủ công</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-100 bg-gray-50">
+                                            <td class="border border-gray-300 px-4 py-2">Outsourcing (nhà cung cấp ngoài)</td>
+                                            <td class="border border-gray-300 px-4 py-2">Đã coi là một lựa chọn trong quy trình</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="font-bold text-lg text-gray-900 mb-4">📌 Hành Động Tiếp Theo</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm border-collapse">
+                                    <thead>
+                                        <tr class="bg-gradient-to-r from-green-500 to-teal-600 text-white">
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Công Việc</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Deadline</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="hover:bg-gray-100">
+                                            <td class="border border-gray-300 px-4 py-2">Thảo luận chi tiết cách tính phế liệu</td>
+                                            <td class="border border-gray-300 px-4 py-2">Tuần tiếp theo</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-100 bg-gray-50">
+                                            <td class="border border-gray-300 px-4 py-2">Tạo tài liệu Working Instructions</td>
+                                            <td class="border border-gray-300 px-4 py-2">Tuần tiếp theo</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-100">
+                                            <td class="border border-gray-300 px-4 py-2">Xây dựng luật lựa chọn máy in</td>
+                                            <td class="border border-gray-300 px-4 py-2">2 tuần</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-100 bg-gray-50">
+                                            <td class="border border-gray-300 px-4 py-2">Kiểm tra sẵn sàng dữ liệu tại mỗi địa điểm</td>
+                                            <td class="border border-gray-300 px-4 py-2">[Không rõ]</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-100">
+                                            <td class="border border-gray-300 px-4 py-2">Chuẩn bị dữ liệu (Data Cleanup)</td>
+                                            <td class="border border-gray-300 px-4 py-2">5 tháng trước go-live</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- CORRECTION Section -->
+                    <section id="correction" class="content-section fade-in bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">✏️ Bảng Tổng Hợp Hiệu Đính</h2>
+                        
+                        <div class="mb-4 p-4 bg-amber-50 border-l-4 border-amber-500 rounded">
+                            <p class="text-sm text-gray-700">Các từ/thuật ngữ được sửa từ phiên âm gốc để chính xác hơn</p>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm border-collapse">
+                                <thead>
+                                    <tr class="bg-gradient-to-r from-amber-500 to-orange-600 text-white">
+                                        <th class="border border-gray-300 px-4 py-2 text-left">Từ Gốc (Sai/Phiên Âm)</th>
+                                        <th class="border border-gray-300 px-4 py-2 text-left">Từ Đã Sửa (Đúng)</th>
+                                        <th class="border border-gray-300 px-4 py-2 text-left">Ghi Chú</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hover:bg-gray-100">
+                                        <td class="border border-gray-300 px-4 py-2">"stating"</td>
+                                        <td class="border border-gray-300 px-4 py-2">Stating (chuẩn bị in sắc)</td>
+                                        <td class="border border-gray-300 px-4 py-2">Chuyên ngành in ấn</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-100 bg-gray-50">
+                                        <td class="border border-gray-300 px-4 py-2">"Q information"</td>
+                                        <td class="border border-gray-300 px-4 py-2">Q Information (Thông tin in sắc)</td>
+                                        <td class="border border-gray-300 px-4 py-2">Ký hiệu trong ngành</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-100">
+                                        <td class="border border-gray-300 px-4 py-2">"batching"</td>
+                                        <td class="border border-gray-300 px-4 py-2">Batching (kết hợp nhiều lệnh)</td>
+                                        <td class="border border-gray-300 px-4 py-2">Thuật ngữ sản xuất</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-100 bg-gray-50">
+                                        <td class="border border-gray-300 px-4 py-2">"stepping"</td>
+                                        <td class="border border-gray-300 px-4 py-2">Stepping (Thông tin in sắc)</td>
+                                        <td class="border border-gray-300 px-4 py-2">Thuật ngữ GPM</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-100">
+                                        <td class="border border-gray-300 px-4 py-2">"Global mass"</td>
+                                        <td class="border border-gray-300 px-4 py-2">Global MAS</td>
+                                        <td class="border border-gray-300 px-4 py-2">Chữ viết tắt đúng</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-100 bg-gray-50">
+                                        <td class="border border-gray-300 px-4 py-2">"SQL lot" [Suy luận]</td>
+                                        <td class="border border-gray-300 px-4 py-2">SKU (Stock Keeping Unit)</td>
+                                        <td class="border border-gray-300 px-4 py-2">Lỗi phiên âm</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-100">
+                                        <td class="border border-gray-300 px-4 py-2">"prepress"</td>
+                                        <td class="border border-gray-300 px-4 py-2">Prepress (chuẩn bị in)</td>
+                                        <td class="border border-gray-300 px-4 py-2">Thuật ngữ in ấn</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-100 bg-gray-50">
+                                        <td class="border border-gray-300 px-4 py-2">"data board"</td>
+                                        <td class="border border-gray-300 px-4 py-2">Die board / Dụng cụ in</td>
+                                        <td class="border border-gray-300 px-4 py-2">Cần làm rõ</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div class="mt-12 px-4 pb-8">
+                <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-6 text-center">
+                    <p class="text-sm mb-2">📊 Global MES - Hệ Thống Quản Lý Sản Xuất Toàn Cầu</p>
+                    <p class="text-xs opacity-90">Tài liệu được biên tập từ cuộc họp ngày 17/11/2025 | Thời gian: 62 phút</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sections = document.querySelectorAll('.content-section');
+        const navButtons = document.querySelectorAll('.sidebar-nav-btn');
+        const searchInput = document.getElementById('searchInput');
+        const searchCountEl = document.getElementById('searchCount');
+
+        // Show first section by default
+        document.getElementById('overview').classList.remove('hidden');
+        navButtons[0].classList.add('sidebar-active');
+
+        // Navigation
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                sections.forEach(section => section.classList.add('hidden'));
+                navButtons.forEach(b => b.classList.remove('sidebar-active'));
+                
+                const sectionId = btn.dataset.section;
+                document.getElementById(sectionId).classList.remove('hidden');
+                btn.classList.add('sidebar-active');
+                
+                window.scrollTo(0, 0);
+            });
+        });
+
+        // Accordion toggle
+        function toggleAccordion(btn) {
+            const content = btn.nextElementSibling;
+            const arrow = btn.querySelector('.accordion-arrow');
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                arrow.textContent = '▲';
+            } else {
+                content.classList.add('hidden');
+                arrow.textContent = '▼';
+            }
+        }
+
+        // Real-time search
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            let totalMatches = 0;
+
+            sections.forEach(section => {
+                const text = section.innerText.toLowerCase();
+                const hasMatch = text.includes(searchTerm);
+                
+                if (searchTerm === '') {
+                    section.classList.add('hidden');
+                    totalMatches = 0;
+                } else {
+                    if (hasMatch) {
+                        section.classList.remove('hidden');
+                        // Highlight matches
+                        section.innerHTML = section.innerHTML.replace(
+                            new RegExp(searchTerm, 'gi'),
+                            match => `<span class="search-highlight">${match}</span>`
+                        );
+                        totalMatches++;
+                    } else {
+                        section.classList.add('hidden');
+                    }
+                }
+            });
+
+            if (searchTerm) {
+                searchCountEl.textContent = `Tìm thấy ${totalMatches} mục`;
+            } else {
+                searchCountEl.textContent = '';
+                document.getElementById('overview').classList.remove('hidden');
+            }
+        });
+
+        // Keyboard shortcut
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '/') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+        });
+
+        // Close all accordions on section change
+        function closeAllAccordions() {
+            document.querySelectorAll('.accordion-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.querySelectorAll('.accordion-arrow').forEach(arrow => {
+                arrow.textContent = '▼';
+            });
+        }
+    </script>
+</body>
+</html>
